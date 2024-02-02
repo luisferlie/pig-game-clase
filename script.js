@@ -25,6 +25,10 @@ const init = function () {
   score1El.textContent = 0
   current0El.textContent = 0
   current1El.textContent = 0
+  player0El.classList.remove('player--winner')
+  player1El.classList.remove('player--winner')
+  player0El.classList.add('player--active')
+  player1El.classList.remove('player--active')
 }
 
 init()
@@ -40,10 +44,6 @@ btnRoll.addEventListener('click', () => {
   diceEl.src = `dice-${dice}.png`
 
   if (dice === 1) {
-    // TODO: cambiar de jugador
-    // variable activePlayer
-    // color css
-    // currentScore a 0
     switchtPlayer()
   } else {
     // sumar el dado al current score
@@ -55,12 +55,34 @@ btnRoll.addEventListener('click', () => {
   }
 })
 
-btnNew.addEventListener('click', () => {
-  console.log('New game')
-})
+btnNew.addEventListener('click', init)
 
 btnHold.addEventListener('click', () => {
-  switchtPlayer()
+  // añadir currentScore al totalScore del jugador activo
+  scores[activePlayer] += currentScore
+  document.querySelector(`#score--${activePlayer}`).textContent =
+    scores[activePlayer]
+  // vemos si finaliza la partida o cambiamos de jugador
+  if (scores[activePlayer] >= 10) {
+    // termina el juego, al jugador activo se le añade la clase winner
+    document
+      .querySelector(`.player--${activePlayer}`)
+      .classList.add('player--winner')
+    document
+      .querySelector(`.player--${activePlayer}`)
+      .classList.remove('player--active')
+    // ocultamos el dado
+    console.log(document.querySelector(`.player--${activePlayer}`))
+    console.log(
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.remove('player--active'),
+    )
+    diceEl.style.display = 'none'
+  } else {
+    // cambiamos de jugador
+    switchtPlayer()
+  }
 })
 
 function switchtPlayer() {
